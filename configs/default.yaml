@@ -1,0 +1,32 @@
+seed: 42
+
+classes: [angry, disgust, fear, happy, neutral, sad, surprise]
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  train_dataset: rafdb        # rafdb | fer2013
+  test_datasets: [rafdb, kdef] # evaluación intra y entre datasets
+  image_size: 224
+
+baseline:
+  features: landmarks         # landmarks | hog
+  classifier: svm
+
+model:
+  backbone: mobilenetv3_large_100   # nombre de timm (p. ej. resnet18, efficientnet_b0)
+  pretrained: true
+
+train:
+  epochs: 20
+  batch_size: 64
+  lr: 0.0003
+  weight_decay: 0.0001
+  class_weighting: true       # clases desbalanceadas
+
+calibration:
+  method: temperature
+  n_bins: 15
+
+output_dir: results
+checkpoint_dir: checkpoints

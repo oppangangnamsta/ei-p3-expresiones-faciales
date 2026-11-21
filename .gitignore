@@ -1,0 +1,32 @@
+# Datos (licencias: no redistribuir)
+data/*
+!data/README.md
+
+# Pesos y artefactos pesados
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.joblib
+checkpoints/
+runs/
+wandb/
+mlruns/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+*.egg-info/
+
+# Entorno / IDE
+.env
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Capturas de la demo (privacidad)
+demo/captures/

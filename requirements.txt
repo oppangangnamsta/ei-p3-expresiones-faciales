@@ -1,0 +1,15 @@
+numpy
+pandas
+pyyaml
+tqdm
+opencv-python
+mediapipe
+scipy
+scikit-learn
+scikit-image
+torch
+torchvision
+timm
+matplotlib
+seaborn
+streamlit
