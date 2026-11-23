@@ -1,5 +1,5 @@
 # Datos (licencias: no redistribuir)
-data/*
+data/
 !data/README.md
 
 # Pesos y artefactos pesados
