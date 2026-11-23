@@ -1,5 +1,8 @@
 """Detección de cara, recorte y alineado con MediaPipe.
 
+FER2013 ya viene recortado a 48x48: no se le aplica detección (a esa resolución MediaPipe
+falla a menudo). Sí se aplica a KDEF/RAF-DB y a los frames de la webcam de la demo.
+
 Guarda las caras procesadas en data/processed/<dataset>/ y un CSV con las imágenes
 en las que no se detectó cara (también es un resultado: fallos del detector).
 """

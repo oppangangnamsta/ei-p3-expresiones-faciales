@@ -6,26 +6,46 @@ por su cuenta, respetando su licencia, y los coloca con esta estructura:
 ```
 data/
   raw/
-    rafdb/      # RAF-DB (acceso bajo acuerdo académico)
-    fer2013/    # FER2013 (Kaggle) — alternativa si RAF-DB no llega a tiempo
-    kdef/       # KDEF (registro, uso no comercial) — evaluación entre datasets / por sujeto
-    ckplus/     # CK+ (solicitud) — opcional
-  processed/    # caras recortadas y alineadas (generado por src/preprocess.py)
+    fer2013/    # dataset principal (Kaggle)
+      train/<clase>/*.jpg
+      test/<clase>/*.jpg
+    kdef/       # KDEF (registro, uso no comercial): evaluación entre datasets y por persona
+    rafdb/      # RAF-DB (opcional, acuerdo académico)
+  processed/    # generado por src/preprocess.py
 ```
 
-## Origen y licencias
+## FER2013 (dataset principal)
 
-| Dataset | Dónde obtenerlo | Licencia / permisos | Estado |
-|---|---|---|---|
-| RAF-DB | http://www.whdeng.cn/RAF/model1.html | Solo investigación; requiere firmar acuerdo | _pendiente_ |
-| FER2013 | https://www.kaggle.com/datasets/msambare/fer2013 | Uso de investigación | _pendiente_ |
-| KDEF | https://kdef.se/ | Uso no comercial; registro | _pendiente_ |
-| CK+ | https://www.jeffcohn.net/resources/ | Uso no comercial; solicitud | _opcional_ |
+Kaggle: https://www.kaggle.com/datasets/msambare/fer2013
 
-Comprobad los enlaces y las condiciones al solicitar el acceso y anotad aquí la fecha de descarga
-y la versión usada.
+Descarga manual: botón *Download* en Kaggle, y descomprimir el zip en `data/raw/fer2013/` de forma
+que queden las carpetas `train/` y `test/`.
+
+Con la CLI de Kaggle (necesita tu token en `~/.kaggle/kaggle.json`, ver https://www.kaggle.com/docs/api):
+
+```bash
+kaggle datasets download -d msambare/fer2013 -p data/raw/fer2013 --unzip
+```
+
+Características a tener en cuenta (van al póster, apartado *limitaciones*):
+- ~28.7k imágenes de train y ~7.2k de test, 48×48 en escala de grises, caras ya recortadas.
+- 7 clases muy desbalanceadas (`disgust` tiene ~4 veces menos ejemplos que la siguiente).
+- Etiquetas con ruido (recogidas de búsquedas web): el techo de accuracy humana ronda el 65 %.
+- **Sin identificador de persona**: no permite evaluación independiente de sujeto. Para eso se usa KDEF.
+- Sin partición de validación: `src/datasets.py` separa un 10 % estratificado de train.
+
+## Otros datasets
+
+| Dataset | Dónde obtenerlo | Licencia / permisos | Uso | Estado |
+|---|---|---|---|---|
+| FER2013 | https://www.kaggle.com/datasets/msambare/fer2013 | Investigación | Entrenamiento y test | _pendiente_ |
+| KDEF | https://kdef.se/ | No comercial; registro | Test entre datasets y por persona | _pendiente_ |
+| RAF-DB | http://www.whdeng.cn/RAF/model1.html | Investigación; acuerdo | Opcional (análisis por grupos) | _opcional_ |
+
+Anotad aquí la fecha de descarga y la versión usada de cada uno.
 
 ## Clases
 
-Se usan las 7 expresiones básicas comunes a los datasets: `angry`, `disgust`, `fear`, `happy`,
-`neutral`, `sad`, `surprise`. Cada dataset se mapea a esta lista en `src/datasets.py`.
+Se usan las 7 expresiones básicas: `angry`, `disgust`, `fear`, `happy`, `neutral`, `sad`,
+`surprise`. Coinciden con los nombres de carpeta de FER2013; el resto de datasets se mapea a esta
+lista en `src/datasets.py`.

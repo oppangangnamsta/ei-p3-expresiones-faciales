@@ -5,9 +5,10 @@ classes: [angry, disgust, fear, happy, neutral, sad, surprise]
 data:
   raw_dir: data/raw
   processed_dir: data/processed
-  train_dataset: rafdb        # rafdb | fer2013
-  test_datasets: [rafdb, kdef] # evaluación intra y entre datasets
-  image_size: 224
+  train_dataset: fer2013        # fer2013 | rafdb
+  test_datasets: [fer2013, kdef] # evaluación intra y entre datasets
+  val_fraction: 0.1             # FER2013 (Kaggle) no trae validación: se separa de train
+  image_size: 224               # FER2013 es 48x48 en gris: se reescala y se replica a 3 canales
 
 baseline:
   features: landmarks         # landmarks | hog

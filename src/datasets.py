@@ -7,6 +7,8 @@ Cada loader devuelve un DataFrame con columnas:
     split     train | val | test
     + metadatos opcionales (edad, género, pose...) para el análisis por grupos
 """
+from pathlib import Path
+
 import pandas as pd
 
 CLASSES = ["angry", "disgust", "fear", "happy", "neutral", "sad", "surprise"]
@@ -23,9 +25,31 @@ def load_rafdb(raw_dir: str) -> pd.DataFrame:
     raise NotImplementedError
 
 
-def load_fer2013(raw_dir: str) -> pd.DataFrame:
-    # TODO: leer las carpetas train/test de la versión de Kaggle
-    raise NotImplementedError
+def load_fer2013(raw_dir: str, val_fraction: float = 0.1, seed: int = 42) -> pd.DataFrame:
+    """Versión de Kaggle (msambare/fer2013): fer2013/{train,test}/<clase>/*.jpg.
+
+    Las imágenes ya son caras recortadas de 48x48 en gris. No hay ID de persona, así que
+    el análisis entre personas se hace con KDEF. La validación se separa de train de forma
+    estratificada.
+    """
+    from sklearn.model_selection import train_test_split
+
+    root = Path(raw_dir) / "fer2013"
+    rows = []
+    for split in ("train", "test"):
+        for label, name in enumerate(CLASSES):
+            for path in sorted((root / split / name).glob("*.jpg")):
+                rows.append({"path": str(path), "label": label, "subject": None, "split": split})
+    df = pd.DataFrame(rows)
+    if df.empty:
+        raise FileNotFoundError(f"No se encontraron imágenes en {root}; ver data/README.md")
+
+    train_idx = df.index[df["split"] == "train"]
+    _, val_idx = train_test_split(
+        train_idx, test_size=val_fraction, stratify=df.loc[train_idx, "label"], random_state=seed
+    )
+    df.loc[val_idx, "split"] = "val"
+    return df
 
 
 def load_kdef(raw_dir: str) -> pd.DataFrame:
@@ -36,5 +60,5 @@ def load_kdef(raw_dir: str) -> pd.DataFrame:
 LOADERS = {"rafdb": load_rafdb, "fer2013": load_fer2013, "kdef": load_kdef}
 
 
-def load_dataset(name: str, raw_dir: str) -> pd.DataFrame:
-    return LOADERS[name](raw_dir)
+def load_dataset(name: str, raw_dir: str, **kwargs) -> pd.DataFrame:
+    return LOADERS[name](raw_dir, **kwargs)
